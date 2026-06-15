@@ -1,0 +1,155 @@
+# PaperFlow 配置文件
+# 复制此文件为 config.yaml 并修改以下路径为你本机的实际路径
+#
+# 使用方法：
+#   1. cp config.example.yaml config.yaml
+#   2. 编辑 config.yaml，修改 paths 和 scopus_topics
+#   3. config.yaml 已被 .gitignore 忽略，不会被提交到 Git
+
+# ========== 系统路径 ==========
+paths:
+  # Python 解释器路径（用于运行 score.py 和 extract_figures.py）
+  # Windows 示例: "D:/ProgramFiles/Anaconda3/python.exe"
+  # macOS/Linux 示例: "/usr/bin/python3" 或 "~/miniconda3/bin/python"
+  python_exe: "python"
+
+  # Scopus CSV 文件下载目录
+  # 对应你从 Scopus 邮件推送下载 CSV 时保存的位置
+  # Windows 示例: "C:/Users/你的用户名/Downloads/"
+  # macOS 示例: "~/Downloads/"
+  scopus_csv_dir: "~/Downloads/"
+
+  # Obsidian Vault 根目录（不用 Obsidian 的话改成任意目录即可）
+  # Windows 示例: "E:/Obsidian/"
+  # macOS 示例: "~/Documents/Obsidian/"
+  obsidian_vault: "~/Documents/Obsidian/"
+
+# ========== 文献路径 ==========
+# 所有路径相对于 obsidian_vault，也可以改为绝对路径
+literature:
+  # PDF 论文存放目录（按 W{周号}/ 子目录组织，如 W24/）
+  # 使用 {paths.obsidian_vault} 引用上方配置的 Obsidian 根目录
+  pdf_dir: "{paths.obsidian_vault}/Literature/Papers/"
+
+  # 评分推荐 Markdown 输出目录
+  summary_dir: "{paths.obsidian_vault}/Literature/Summary/"
+
+  # 精读 HTML 输出目录（按 W{周号}/ 子目录组织）
+  html_output_dir: "{paths.obsidian_vault}/Literature/Paper_reader/"
+
+# ========== Scopus 订阅主题 ==========
+# 每个主题对应一个 Scopus 推送的 CSV 文件
+# 关键词和期刊列表将用于评分引擎的自动打分
+scopus_topics:
+  # 主题 1：纯点蚀研究
+  - name: "纯点蚀研究"
+    csv_filename: "纯点蚀研究.csv"
+
+    # 相关性关键词（标题/摘要匹配，每命中一个 +1.5 分，上限 5.0）
+    # 支持正则表达式，如 "inclusions?" 匹配 "inclusion" 和 "inclusions"
+    relevance_keywords:
+      - "pitting"
+      - "localized corrosion"
+      - "passivity"
+      - "micro-galvanic"
+      - "inclusions?"
+      - "pit"
+
+    # 研究质量关键词（检测到则 +1.0 分）
+    quality_keywords:
+      - "in-situ"
+      - "xps"
+      - "apt"
+      - "hrtem"
+      - "eis"
+
+    # 顶刊列表（影响力 3.0 分）
+    top_journals:
+      - "corrosion science"
+      - "acta materialia"
+      - "electrochimica acta"
+      - "npj materials degradation"
+      - "journal of materials science & technology"
+      - "journal of the electrochemical society"
+
+    # 高水平期刊（影响力 2.0 分）
+    high_journals:
+      - "corrosion"
+      - "materials & design"
+
+  # 主题 2：点蚀预测
+  - name: "点蚀预测"
+    csv_filename: "点蚀预测.csv"
+    relevance_keywords:
+      - "phase-field"
+      - "cellular automata"
+      - "nernst-planck"
+      - "fem"
+      - "pinn"
+      - "neural networks?"
+      - "u-net"
+      - "deep learning"
+    quality_keywords:
+      - "experimental validation"
+      - "mechanism-driven"
+      - "physics-informed"
+      - "segmentation"
+      - "image processing"
+    top_journals:
+      - "corrosion science"
+      - "acta materialia"
+      - "electrochimica acta"
+      - "npj materials degradation"
+      - "journal of materials science & technology"
+      - "journal of the electrochemical society"
+      - "computational materials science"
+    high_journals:
+      - "corrosion"
+      - "materials & design"
+
+  # 主题 3：通用数字孪生
+  - name: "通用数字孪生"
+    csv_filename: "通用数字孪生.csv"
+    relevance_keywords:
+      - "digital twin"
+      - "surrogate models?"
+      - "real-time"
+      - "iot"
+      - "fno"
+      - "u-net"
+    quality_keywords:
+      - "system architecture"
+      - "multi-physics"
+      - "latency"
+    top_journals:
+      - "corrosion science"
+      - "acta materialia"
+      - "electrochimica acta"
+      - "npj materials degradation"
+      - "journal of materials science & technology"
+      - "journal of the electrochemical society"
+      - "ieee internet of things"
+      - "computer-aided design"
+    high_journals:
+      - "corrosion"
+      - "materials & design"
+
+# ========== 评分权重（可调整） ==========
+scoring:
+  relevance_weight: 0.50    # 相关性权重（满分 5.0）
+  impact_weight: 0.30       # 影响力权重（满分 3.0）
+  quality_weight: 0.20      # 研究质量权重（满分 2.0）
+  review_penalty: -0.5      # 纯综述论文扣分
+
+# ========== Obsidian 集成（可选） ==========
+obsidian:
+  # 是否生成 WikiLink 格式的链接（不使用 Obsidian 可关闭）
+  use_wikilinks: true
+  # 推荐笔记的前置元数据模板
+  frontmatter_template: |
+    ---
+    tags: [literature, scopus]
+    week: {week_number}
+    topic: {topic_name}
+    date: {date}
+    ---

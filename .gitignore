@@ -1,0 +1,34 @@
+# 用户私有配置（包含本地路径，不可提交）
+config.yaml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# 敏感文件
+.env
+*.env
+credentials.*
+*secret*
+*_secret*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.log
+
+# Obsidian
+.obsidian/
