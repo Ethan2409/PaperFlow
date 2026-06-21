@@ -4,7 +4,7 @@
 
 ## 这是什么？
 
-PaperFlow 是一套 [WorkBuddy](https://workbuddy.ai) / [Claude Code](https://claude.ai/claude-code) 的 Skill 集合，把"读文献"拆成两步流水线：
+PaperFlow 是一套 AI Agent Skill 集合（WorkBuddy / Claude Code / Codex / Antigravity 都能用），把"读文献"拆成两步流水线：
 
 1. **scopus-subscription**：喂给它 Scopus 周更推送的 CSV 文献列表，自动评分（0-10 分）、排序，生成 Obsidian Markdown 推荐笔记
 2. **paper-reader**：喂给它下载好的 PDF 论文，按九大模块深度拆解，输出带图片、公式、SVG 可视化、Q&A 的自包含 HTML 精读笔记
@@ -37,15 +37,15 @@ PaperFlow 是一套 [WorkBuddy](https://workbuddy.ai) / [Claude Code](https://cl
 ```
 周一：Scopus 邮件 → CSV → "处理本周文献" → 评分推荐 (scopus-subscription)
 周三：手动下载 3-5 篇 PDF → 放入 Papers/W24/
-周五："处理本周文献" → 精读笔记 HTML (paper-reader)
+周五："文献精读" → 精读笔记 HTML (paper-reader)
 ```
 
 ## 安装
 
 ### 前置要求
 
-- [WorkBuddy](https://workbuddy.ai) 或 [Claude Code](https://claude.ai/claude-code)（已安装并配置）
-- Python 3.8+（推荐 Anaconda）
+- AI Agent（WorkBuddy / Claude Code / Codex / Antigravity 等，已安装并配置）
+- Python 3.8+
 - 安装依赖包：
   ```bash
   pip install PyMuPDF pandas pyyaml
@@ -54,32 +54,44 @@ PaperFlow 是一套 [WorkBuddy](https://workbuddy.ai) / [Claude Code](https://cl
 
 ### 安装步骤
 
-**1. 复制 Skill 到 WorkBuddy skills 目录：**
+**新手推荐：让 AI 帮你装**
 
-```bash
-# Windows（PowerShell）
-cp -r scopus-subscription/ ~/.workbuddy/skills/scopus-subscription/
-cp -r paper-reader/ ~/.workbuddy/skills/paper-reader/
+1. 下载整个项目的压缩包（GitHub 页面点 "Code → Download ZIP"）
+2. 把压缩包丢给你的 AI Agent
+3. 输入：
 
-# macOS / Linux
-cp -r scopus-subscription/ ~/.workbuddy/skills/scopus-subscription/
-cp -r paper-reader/ ~/.workbuddy/skills/paper-reader/
+```
+帮我安装这两个 skill
 ```
 
-**2. 创建配置文件：**
+Agent 会自己解压、复制到 skills 目录、帮你配置好。
+
+**老手方式：手动安装**
+
+1. 把 `scopus-subscription/` 和 `paper-reader/` 两个文件夹复制到 Agent 的 skills 目录：
+
+```bash
+# WorkBuddy（Windows）
+cp -r scopus-subscription/ ~/.workbuddy/skills/scopus-subscription/
+cp -r paper-reader/ ~/.workbuddy/skills/paper-reader/
+
+# Claude Code / Codex — 具体路径看对应文档
+```
+
+2. 创建配置文件：
 
 ```bash
 cd PaperFlow
 cp config.example.yaml config.yaml
 ```
 
-**3. 编辑 `config.yaml`，把路径改成你本机的实际路径：**
+3. 编辑 `config.yaml`，把路径改成你本机的实际路径：
 
 ```yaml
 paths:
-  python_exe: "D:/ProgramFiles/Anaconda3/python.exe"   # 你的 Python 路径
-  scopus_csv_dir: "C:/Users/你的用户名/Downloads/"     # CSV 下载目录
-  obsidian_vault: "E:/Obsidian/"                       # Obsidian Vault 目录
+  python_exe: "python"                                  # 你的 Python 路径
+  scopus_csv_dir: "~/Downloads/"                        # Scopus CSV 下载目录
+  obsidian_vault: "~/Documents/Obsidian/"               # Obsidian Vault（不用则改成任意目录）
 
 literature:
   pdf_dir: "{paths.obsidian_vault}/Literature/Papers/"
@@ -87,11 +99,11 @@ literature:
   html_output_dir: "{paths.obsidian_vault}/Literature/Paper_reader/"
 ```
 
-**4. 重启 WorkBuddy，Skill 自动生效。**
+4. 重启 Agent，Skill 自动生效。
 
-### 路径说明
+### 懒人配置法
 
-所有路径集中在 `config.yaml` 里管理，不需要翻两个 `SKILL.md` 一个个改：
+不想手改 `config.yaml`？告诉 AI Agent 你的 4 个文件夹路径和研究主题方向，Agent 会自动帮你更新配置和关键词评分标准。
 
 | 变量 | 作用 | 说明 |
 |------|------|------|
@@ -106,7 +118,7 @@ literature:
 
 ### scopus-subscription：文献筛选
 
-在 WorkBuddy / Claude Code 中输入：
+在 AI Agent 中输入：
 
 ```
 处理本周文献
@@ -120,13 +132,13 @@ Skill 会自动：
 
 ### paper-reader：深度精读
 
-**批量处理本周所有 PDF：**
+在 AI Agent 中输入：
 
 ```
-处理本周文献
+文献精读
 ```
 
-（当 PDF 目录中有待处理的论文时触发）
+（或者 `精读论文`、`处理本周文献` 也可以触发）
 
 **单篇精读：**
 
@@ -145,7 +157,7 @@ Skill 会自动：
 ```
 周一：收到 Scopus 邮件 → 下载 CSV → 说"处理本周文献" → 获取 Top 10 推荐
 周二-周四：根据推荐手动下载 3-5 篇 PDF → 放入 Papers/W{周号}/
-周五：说"处理本周文献" → 阅读生成的 HTML 精读笔记
+周五：说"文献精读" → 阅读生成的 HTML 精读笔记
 ```
 
 ## 适配到你的研究领域
@@ -158,6 +170,16 @@ PaperFlow 的核心评分框架和精读框架是**领域无关**的。只要你
 - **PDF 方式**（仅 paper-reader）：直接在 PDF 目录中放论文，跳过评分
 
 ### 第二步：修改关键词配置
+
+两种方式，二选一。
+
+**方式一：直接告诉 AI（推荐）**
+
+> "我的研究方向是 [你的领域]，帮我更新 skill 里的关键词和评分标准。"
+
+Agent 会自己改 `config.yaml` 和评分引擎的词库。
+
+**方式二：手动改 config.yaml**
 
 编辑 `config.yaml` 中的 `scopus_topics` 部分：
 
@@ -179,13 +201,9 @@ scopus_topics:
       - "Your Field Good Journal"
 ```
 
-### 第三步：让 AI 帮你自动适配
+### 第三步：直接开始用
 
-把 `SKILL.md` 和 `prompt.md` 喂给 WorkBuddy / Claude Code，告诉它：
-
-> "我研究的是 [你的领域]，请根据这两个 Skill 内容，帮我调整评分关键词和推荐模板。"
-
-Agent 会自动分析框架，生成适配你领域的版本。
+配置好之后，输入 `处理本周文献` 或 `文献精读`，Skill 会自动按你的领域打分和精读。
 
 ### 核心原理
 
